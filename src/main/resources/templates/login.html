@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="utf-8"/>
+<title>Authentification</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+<p>HHHHHHHHHHH</p>
+	<form th:action="@{/login}" method="post">
+		<div>
+			<label>Username</label>
+			<!-- obligatoirement il faut que name = username spring -->
+			<input type="text" name="app_username"/>
+		</div>
+		<div>
+			<label>Password</label>
+			<input type="password" name="app_password"/>
+		</div>
+		<button type="submit">Login</button>
+	</form>
+</body>
+</html>

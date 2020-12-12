@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="template1.html">
+<head>
+<meta charset="utf-8" />
+<title>Comptes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+	<div layout:fragment="content">
+
+		<!-- premier colonne de la page -->
+		<div class="col-md-6">
+
+			<!-- deux boites de dialogues -->
+			<div class="panel panel-primary">
+				<!-- titre -->
+				<div class="panel-heading">Consultation d'un compte</div>
+				<!-- informations pour le compte -->
+				<div class="panel-body">
+					<form th:action="@{/consulterCompte}" method="get">
+						<div>
+							<label>Entrez le code compte</label> 
+							<input type="text"
+								name="codeCompte" th:value="${codeCompte}">
+							<button type="submit" class="btn btn-primary">OK</button>
+						</div>
+					</form>
+					<div class="text-danger" th:if="${exception}"
+						th:text="${exception.message}"></div>
+				</div>
+			</div>
+			<!--  boite de dialogue -->
+			<div class="panel panel-primary" th:if="${compte}">
+				<!-- titre -->
+				<div class="panel-heading">Information sur le compte</div>
+				<!-- informations pour le compte -->
+				<div class="panel-body">
+					<!-- on va afficher les info qui sont dans le model en utilisant thymeleaf -->
+					<div>
+						<label>Code compte :</label>
+						<!-- dans le model il y a un objet compte -->
+						<label th:text="${compte.numCompte}"></label>
+					</div>
+					<div>
+						<label>Nom du client :</label> <label
+							th:text="${compte.client.nom}"></label>
+					</div>
+					<div>
+						<label>Solde:</label> <label th:text="${compte.solde}"></label>
+					</div>
+					<div>
+						<label>Date création :</label> <label
+							th:text="${compte.dateCreation}"></label>
+					</div>
+					<div>
+						<label>Type de compte :</label> <label
+							th:text="${compte.class.simpleName}"></label>
+					</div>
+					<div th:if="${compte.class.simpleName =='CompteCourant'}">
+						<label>Découvert :</label> <label th:text="${compte.decouvert}"></label>
+					</div>
+					<div th:if="${compte.class.simpleName =='CompteEpargne'}">
+						<label>Taux:</label> <label th:text="${compte.taux}"></label>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<!-- deuxième colonne de la page -->
+		<div class="col-md-6">
+			<div class="panel panel-primary" th:if="${compte}">
+				<!-- titre -->
+				<div class="panel-heading">Opérations sur le compte</div>
+				<!-- informations pour le compte -->
+				<div class="panel-body">
+					<!-- on veux effectuer des operations : formulaire -->
+					<form th:action="@{/saveOperation}" method="post">
+						<div>
+							<label>Compte </label>
+							<!-- le num du compte que j'ai consulté , caché, le compte en ligne -->
+							<input type="hidden" name="codeCompte" th:value="${codeCompte}" />
+							<label th:text="${codeCompte}"></label>
+						</div>
+						<div>
+							<input type="radio" name="typeOperation" value="VERS"
+								checked="checked"
+								onchange="document.getElementById('forVirement').style.display='none'" />
+							<label>Versement</label> <input type="radio" name="typeOperation"
+								value="RET"
+								onchange="document.getElementById('forVirement').style.display='none'" />
+							<label>Retrait</label> <input type="radio" name="typeOperation"
+								value="VIR"
+								onchange="document.getElementById('forVirement').style.display='block'" />
+							<label>Virement</label>
+						</div>
+
+						<div id="forVirement" style="display: none">
+							<label>Vers : </label> <input type="text" name="codeCompte2" />
+						</div>
+
+						<div>
+							<label>Montant : </label> <input type="text" name="montant" />
+						</div>
+
+						<div class="text-danger"
+							th:text="${#httpServletRequest.getParameter('error')}"></div>
+						<!-- #on fait ref à un objet qu'on a pas crée qui existe 
+						dans le context de la servlet psq thymeleaf s'exécute dans le context d'une servlet-->
+
+						<div>
+							<button class="btn btn-primary" type="submit" name="submit">Envoyer</button>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="panel panel-primary" th:if="${compte}">
+					<!-- titre -->
+					<div class="panel-heading">Liste des opérations</div>
+					<!-- informations pour le compte -->
+					<div class="panel-body">
+						<table class="table table-striped">
+							<tr>
+								<th>NUM</th>
+								<th>Type Operation</th>
+								<th>DATE</th>
+								<th>MONTANT</th>
+							</tr>
+							<tr th:each="o:${operations}">
+								<td th:text="${o.numOperation}"></td>
+								<td th:text="${o.class.simpleName}"></td>
+								<td th:text="${o.dateOperation}"></td>
+								<td th:text="${o.montant}"></td>
+							</tr>
+						</table>
+						<div class="container">
+							<ul class="nav nav-pills">
+								<!-- pour parcourir un tableau avec des index  -->
+								<li th:each="p,status:${pages}"><a
+									th:href="@{/consulterCompte(codeCompte=${codeCompte},
+								 page=${status.index})}"
+									th:text="${status.index}"></a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+
+</body>
+</html>
